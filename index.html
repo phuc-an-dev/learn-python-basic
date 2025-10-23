@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python cho Xử lý Dữ liệu và Xử lý Ảnh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background Blobs */
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .blob2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            top: 50%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .blob3 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            bottom: 10%;
+            left: 10%;
+            animation-delay: 10s;
+        }
+
+        .blob4 {
+            width: 450px;
+            height: 450px;
+            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            top: 30%;
+            left: 50%;
+            animation-delay: 15s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(100px, -100px) scale(1.1);
+            }
+            66% {
+                transform: translate(-100px, 100px) scale(0.9);
+            }
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            margin-top: 60px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+        }
+
+        /* Section */
+        section {
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+            margin-bottom: 60px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        table.glass {
+            padding: 30px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .day-number {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        /* Week Badge */
+        .week-badge {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 30px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Projects */
+        .project-card {
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -47px;
+            top: 35px;
+            width: 14px;
+            height: 14px;
+            background: #667eea;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+
+        .timeline-day {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        /* Tips Grid */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .tip-card {
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .tip-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .tip-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 120px 20px;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .hero-stats {
+                gap: 30px;
+            }
+
+            th, td {
+                padding: 15px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Blobs -->
+    <div class="blob-container">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="blob blob3"></div>
+        <div class="blob blob4"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="fade-in">Python cho Xử lý Dữ liệu <br> và Xử lý Ảnh</h1>
+                <p class="fade-in">Phục vụ nghiên cứu khoa học</p>
+                
+                <div class="hero-stats fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number">2 Tuần</div>
+                        <div class="stat-label">Thời lượng</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">14 Ngày</div>
+                        <div class="stat-label">Học tập</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3 Dự án</div>
+                        <div class="stat-label">Thực hành</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mục tiêu -->
+    <section>
+        <div class="container">
+            <h2 class="section-title fade-in">Mục Tiêu Tổng Quát</h2>
+            <p class="section-subtitle fade-in">Những gì bạn sẽ đạt được sau khóa học</p>
+            
+            <div class="cards-grid">
+                <div class="card glass fade-in">
+                    <div class="card-number">1</div>
+                    <h3>Làm chủ Python</h3>
+                    <p>Thành thạo cú pháp và cấu trúc cơ bản của Python, nắm vững các khái niệm lập trình hướng đối tượng</p>
+                </div>
+                <div class="card glass fade-in">
+                    <div class="card-number">2</div>
+                    <h3>NumPy & Pandas</h3>
+                    <p>Sử dụng thành thạo các thư viện phân tích dữ liệu chuyên nghiệp cho nghiên cứu khoa học</p>
+                </div>
+                <div class="card glass fade-in">
+                    <div class="card-number">3</div>
+                    <h3>OpenCV</h3>
+                    <p>Xử lý ảnh và thị giác máy tính cơ bản, áp dụng vào các bài toán thực tế</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phần I -->
+    <section>
+        <div class="container">
+            <div style="text-align: center;">
+                <span class="week-badge fade-in">TUẦN 1</span>
+            </div>
+            <h2 class="section-title fade-in">Phần I - Nền Tảng Python & NumPy</h2>
+            
+            <div class="table-container fade-in">
+                <table class="glass">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Chủ đề</th>
+                            <th>Nội dung chính</th>
+                            <th>Thực hành</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="day-number">1</span></td>
+                            <td><strong>Cài đặt & Biến</strong></td>
+                            <td>Cài đặt Python, VS Code/Jupyter; Biến, kiểu dữ liệu, toán tử, if/else, vòng lặp</td>
+                            <td><span class="badge">Viết chương trình cơ bản</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">2</span></td>
+                            <td><strong>Hàm & Cấu trúc</strong></td>
+                            <td>Hàm, List, Tuple, Dictionary, đọc/ghi file text</td>
+                            <td><span class="badge">Lưu và đọc dữ liệu nhỏ</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">3</span></td>
+                            <td><strong>NumPy cơ bản</strong></td>
+                            <td>Tạo mảng ndarray, thuộc tính, phép toán, hàm thống kê</td>
+                            <td><span class="badge">Thực hành phép toán mảng</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card glass fade-in" style="margin-top: 30px; padding: 30px;">
+                <h4 style="color: #667eea; margin-bottom: 15px; font-size: 1.2rem;">📚 Tài nguyên học tập</h4>
+                <p style="color: rgba(255, 255, 255, 0.7);">Python Docs, NumPy Docs, W3Schools, FreeCodeCamp, Codecademy</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phần II -->
+    <section>
+        <div class="container">
+            <div style="text-align: center;">
+                <span class="week-badge fade-in">TUẦN 1 (tiếp)</span>
+            </div>
+            <h2 class="section-title fade-in">Phần II - Pandas cho Xử Lý Dữ Liệu</h2>
+            
+            <div class="table-container fade-in">
+                <table class="glass">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Chủ đề</th>
+                            <th>Nội dung chính</th>
+                            <th>Thực hành</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="day-number">4</span></td>
+                            <td><strong>Giới thiệu Pandas</strong></td>
+                            <td>Cài đặt, tạo Series & DataFrame từ dict/list</td>
+                            <td><span class="badge">Tạo bảng dữ liệu</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">5</span></td>
+                            <td><strong>Làm sạch dữ liệu</strong></td>
+                            <td>Đọc CSV, lọc hàng/cột, xử lý dữ liệu thiếu</td>
+                            <td><span class="badge">Làm sạch dữ liệu thật</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">6</span></td>
+                            <td><strong>Gộp & Nhóm</strong></td>
+                            <td>merge, concat, groupby, tổng hợp sum/mean/count</td>
+                            <td><span class="badge">Phân tích dữ liệu Kaggle</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">7</span></td>
+                            <td><strong>Báo cáo</strong></td>
+                            <td>Tổng hợp nội dung 6 ngày đầu</td>
+                            <td><span class="badge">Viết báo cáo mini</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phần III -->
+    <section>
+        <div class="container">
+            <div style="text-align: center;">
+                <span class="week-badge fade-in">TUẦN 2</span>
+            </div>
+            <h2 class="section-title fade-in">Phần III - OpenCV cho Xử Lý Ảnh</h2>
+            
+            <div class="table-container fade-in">
+                <table class="glass">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Chủ đề</th>
+                            <th>Nội dung chính</th>
+                            <th>Thực hành</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="day-number">1</span></td>
+                            <td><strong>Làm quen OpenCV</strong></td>
+                            <td>Cài đặt, đọc/hiển thị/lưu ảnh, hiểu ảnh là mảng NumPy</td>
+                            <td><span class="badge">Đọc và hiển thị ảnh</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">2</span></td>
+                            <td><strong>Thao tác cơ bản</strong></td>
+                            <td>Chuyển màu, truy cập pixel, cắt ROI, resize</td>
+                            <td><span class="badge">Cắt và đổi kích thước</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-number">3</span></td>
+                            <td><strong>Hiệu ứng & Biên</strong></td>
+                            <td>threshold, GaussianBlur, medianBlur, Canny</td>
+                            <td><span class="badge">Làm mờ và phát hiện biên</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phần IV -->
+    <section>
+        <div class="container">
+            <div style="text-align: center;">
+                <span class="week-badge fade-in">TUẦN 2 (tiếp)</span>
+            </div>
+            <h2 class="section-title fade-in">Phần IV - Dự Án Mini Tổng Hợp</h2>
+            
+            <div class="cards-grid">
+                <div class="project-card glass fade-in">
+                    <div class="project-number">1</div>
+                    <h3>Phân tích Dữ liệu</h3>
+                    <p>Làm sạch và phân tích dữ liệu Kaggle bằng Pandas kết hợp với biểu đồ Matplotlib</p>
+                </div>
+                <div class="project-card glass fade-in">
+                    <div class="project-number">2</div>
+                    <h3>Xử lý Ảnh</h3>
+                    <p>Ứng dụng xử lý ảnh với các kỹ thuật chuyển grayscale, làm mờ, và phát hiện biên</p>
+                </div>
+                <div class="project-card glass fade-in">
+                    <div class="project-number">3</div>
+                    <h3>Tích hợp Toàn diện</h3>
+                    <p>Dùng OpenCV xử lý ảnh hàng loạt, Pandas tổng hợp kết quả và xuất ra CSV</p>
+                </div>
+            </div>
+
+            <div class="glass fade-in" style="margin-top: 50px; padding: 40px;">
+                <h3 style="margin-bottom: 30px; font-size: 1.8rem;">Lịch trình chi tiết</h3>
+                <div class="timeline">
+                    <div class="timeline-item glass">
+                        <div class="timeline-day">Ngày 4</div>
+                        <h4 style="margin-bottom: 10px;">Ôn tập NumPy & Pandas</h4>
+                        <p style="color: rgba(255, 255, 255, 0.7);">Bài tập groupby, merge</p>
+                    </div>
+                    <div class="timeline-item glass">
+                        <div class="timeline-day">Ngày 5</div>
+                        <h4 style="margin-bottom: 10px;">Ôn tập OpenCV</h4>
+                        <p style="color: rgba(255, 255, 255, 0.7);">Biến đổi hình học (xoay, tịnh tiến)</p>
+                    </div>
+                    <div class="timeline-item glass">
+                        <div class="timeline-day">Ngày 6</div>
+                        <h4 style="margin-bottom: 10px;">Dự án tổng hợp</h4>
+                        <p style="color: rgba(255, 255, 255, 0.7);">Thực hiện cả 3 dự án mini</p>
+                    </div>
+                    <div class="timeline-item glass">
+                        <div class="timeline-day">Ngày 7</div>
+                        <h4 style="margin-bottom: 10px;">Báo cáo kết quả</h4>
+                        <p style="color: rgba(255, 255, 255, 0.7);">Trình bày sản phẩm, kết quả và rút kinh nghiệm</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card glass fade-in" style="margin-top: 30px; padding: 30px;">
+                <h4 style="color: #667eea; margin-bottom: 15px; font-size: 1.2rem;">🔗 Tài nguyên dự án</h4>
+                <p style="color: rgba(255, 255, 255, 0.7);">Kaggle (Dataset thực hành), PyImageSearch (Bài viết dự án nhỏ)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hướng dẫn học -->
+    <section>
+        <div class="container">
+            <h2 class="section-title fade-in">Hướng Dẫn Học Hiệu Quả</h2>
+            <p class="section-subtitle fade-in">Những nguyên tắc giúp bạn học tập tốt nhất</p>
+            
+            <div class="tips-grid">
+                <div class="tip-card glass fade-in">
+                    <h4>Học chủ động</h4>
+                    <p>Viết code, thử sai, sửa lỗi. Thực hành là chìa khóa để thành thạo</p>
+                </div>
+                <div class="tip-card glass fade-in">
+                    <h4>Tập trung vào cách dùng</h4>
+                    <p>Biết sử dụng hàm/thư viện là đủ giai đoạn đầu</p>
+                </div>
+                <div class="tip-card glass fade-in">
+                    <h4>Jupyter Notebook</h4>
+                    <p>Thử nghiệm từng bước, hiển thị kết quả trực tiếp</p>
+                </div>
+                <div class="tip-card glass fade-in">
+                    <h4>Google & Stack Overflow</h4>
+                    <p>Tìm giải pháp nhanh khi gặp lỗi. Đừng ngại tra cứu</p>
+                </div>
+                <div class="tip-card glass fade-in">
+                    <h4>Bỏ qua chi tiết chưa cần</h4>
+                    <p>Không cần học sâu OOP, tập trung vào ứng dụng</p>
+                </div>
+                <div class="tip-card glass fade-in">
+                    <h4>Học từ lỗi</h4>
+                    <p>Debug là kỹ năng quan trọng. Mỗi lỗi là bài học</p>
+                </div>
+                <div class="tip-card glass fade-in">
+                    <h4>Thời gian học</h4>
+                    <p>2-3 tiếng/ngày, tăng thêm cuối tuần</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tổng kết -->
+    <section>
+        <div class="container">
+            <h2 class="section-title fade-in">Tổng Kết & Báo Cáo</h2>
+            <p class="section-subtitle fade-in">Đánh giá và ghi nhận kết quả học tập</p>
+            
+            <div class="cards-grid">
+                <div class="card glass fade-in">
+                    <div class="card-number">T1</div>
+                    <h3>Báo cáo Tuần 1</h3>
+                    <p>Tóm tắt kiến thức Python, NumPy, Pandas. Đánh giá tiến độ và khó khăn gặp phải</p>
+                </div>
+                <div class="card glass fade-in">
+                    <div class="card-number">T2</div>
+                    <h3>Báo cáo Tuần 2</h3>
+                    <p>Tóm tắt kiến thức OpenCV, kết quả dự án mini. Phân tích điểm mạnh và cần cải thiện</p>
+                </div>
+                <div class="card glass fade-in">
+                    <div class="card-number">CK</div>
+                    <h3>Báo cáo Cuối khóa</h3>
+                    <p>Tổng hợp toàn bộ kiến thức, đánh giá khả năng áp dụng vào nghiên cứu thực tế</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="section-title fade-in" style="font-size: 3.5rem; margin-bottom: 20px;">
+                Sẵn sàng bắt đầu hành trình?
+            </h2>
+            <p class="section-subtitle fade-in" style="font-size: 1.4rem;">
+                Chỉ cần 2 tuần để làm chủ Python cho nghiên cứu của bạn
+            </p>
+            
+            <div class="cta-buttons">
+                <button class="btn btn-primary fade-in">Bắt đầu ngay</button>
+                <button class="btn btn-secondary fade-in">Tải tài liệu</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <h3>Python cho Xử lý Dữ liệu và Xử lý Ảnh</h3>
+            <p style="color: rgba(255, 255, 255, 0.7); margin: 20px 0;">
+                Khóa học thực hành phục vụ nghiên cứu khoa học
+            </p>
+            <p style="color: rgba(255, 255, 255, 0.4); font-size: 0.9rem;">
+                © 2025 Python Course. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for buttons
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect to blobs
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.blob');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            blobs.forEach((blob, index) => {
+                const speed = (index + 1) * 20;
+                const xMove = (x - 0.5) * speed;
+                const yMove = (y - 0.5) * speed;
+                
+                blob.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            });
+        });
+
+        // Add hover effect to cards
+        document.querySelectorAll('.card, .tip-card, .project-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+        });
+
+        // Gradient animation for hero title
+        const heroTitle = document.querySelector('.hero-content h1');
+        if (heroTitle) {
+            let gradientPosition = 0;
+            setInterval(() => {
+                gradientPosition += 1;
+                if (gradientPosition > 200) gradientPosition = 0;
+                heroTitle.style.backgroundPosition = `${gradientPosition}% 50%`;
+            }, 30);
+        }
+    </script>
+</body>
+</html>
